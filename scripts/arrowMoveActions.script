@@ -1,3 +1,34 @@
+go.property("speed", 200)
+
+local updateCounter = 0
+local start = os.time()
+
 function init(self)
-	go.set_position(vmath.vector3(250, 125, 0))
+	start = os.time()
+	msg.post(".", "acquire_input_focus")
+	go.set_position(vmath.vector3(250, 125, 0.9))
+	self.direction = vmath.vector3(0,0,0)
+end
+
+function update(self, dt)
+	go.set_position(go.get_position() + self.direction * self.speed * dt)
+	self.direction = vmath.vector3(0,0,0)
+
+	updateCounter = updateCounter + 1
+	local current = os.time()
+	local numOfSecondsSinceStart = os.difftime(current, start)
+	local fps = updateCounter / numOfSecondsSinceStart
+	print("game is running at " .. fps .. "fps")
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("up") then
+		self.direction.y = 1
+	elseif action_id == hash("down") then
+		self.direction.y = -1
+	elseif action_id == hash("left") then
+		self.direction.x = -1
+	elseif action_id == hash("right") then
+		self.direction.x = 1
+	end
 end
